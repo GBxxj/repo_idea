@@ -47,10 +47,11 @@ public class AccountServiceImpl implements AccountService {
     public void deleteBatch(Integer[] ids) {
         accountDao.deleteBatch(ids);
     }
-      @Override
+    
+    @Override
     public void deleteBatch2(Integer[] ids) {
         accountDao.deleteBatch(ids);
-        System.out.println("这是在github上新增的代码")
+        System.out.println("这是在github上新增的代码");
     }
 }
      
