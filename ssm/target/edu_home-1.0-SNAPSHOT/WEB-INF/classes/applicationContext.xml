@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop" xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--注解组件扫描-->
+    <context:component-scan base-package="com.service"/>
+
+    <!--spring整合mybatis开始..........(相当于代替了mybatis原本核心配置文件SqlMapConfig.xml)-->
+    <!--引入jdbc.properties-->
+    <context:property-placeholder location="classpath:jdbc.properties"></context:property-placeholder>
+
+    <!--配置dataSource-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--sqlSessionFactory的创建权交给spring 生成sqlSession-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <!--类型别名配置(为该包下所有类起别名，便于resultType使用，与类名相同不区分大小写)-->
+        <property name="typeAliasesPackage" value="com.domain"></property>
+        <!--引入加载mybatis核心配置文件SqlMapConfig.xml，也可以不用加载(删除)-->
+    <!--    <property name="configLocation" value="classpath:SqlMapConfig.xml"></property>-->
+     </bean>
+
+    <!--mapper映射扫描 MapperScannerConfigurer扫描该包下所有接口 生成代理对象存到ioc容器中-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.dao"></property>
+    </bean>
+
+    <!--spring整合mybatis结束..........-->
+
+    <!--spring的声明事务-->
+    <!--1.事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+       <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <!--2.开启事务注解的支持-->
+    <tx:annotation-driven></tx:annotation-driven>
+
+
+</beans>
